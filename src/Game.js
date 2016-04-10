@@ -82,12 +82,9 @@ BasicGame.Game.prototype = {
 			this.game.camera.follow(this.player);
 		},
 		mouseClicked: function(aa, event) {
-			console.log(this.game.inputEnable);
-			this.game.inputEnable = false;
+			this.game.input.enabled = false;
 			var x = (event.x + this.game.camera.x) / this.scale;
 			var y = (event.y + this.game.camera.y) / this.scale;
-
-			console.log(this.game.camera);
 
 			var tile = this.map.getTileWorldXY(x, y);
 
@@ -115,6 +112,6 @@ BasicGame.Game.prototype.move = function() {
 
 		playerMovement.start();
 	} else {
-		this.game.inputEnable = true;
+		this.game.input.enabled = true;
 	}
 }

@@ -50,6 +50,7 @@ BasicGame.Game.prototype = {
 			// console.log(data);
 
 			this.scale = Math.max(window.devicePixelRatio, 2);
+			this.game.scaleFactor = this.scale;
 
 			this.cache.addTilemap('dynamicMap', null, data, Phaser.Tilemap.CSV);
 
@@ -73,8 +74,8 @@ BasicGame.Game.prototype = {
 
 			this.add.text(10, 20, "Health:" + this.scale, style);
 
-			this.player = this.add.sprite(0, 0, 'player', 0);
-			this.player.scale = {x: this.scale, y: this.scale};
+			this.player = new Character(this.game, 64, 64, 'player');
+			this.add.existing( this.player );
 
 			this.player.animations.add('idle', [0, 1], 2, true);
 			this.player.animations.play('idle');
@@ -91,27 +92,7 @@ BasicGame.Game.prototype = {
 		 	var playerStart = this.map.getTileWorldXY(this.player.x / this.scale, this.player.y / this.scale);
 
 			var pf = new PathFinding(this.mapGrid, this.mapWidth, this.mapHeight);
-			this.remainingPaths = pf.find({x: playerStart.x, y: playerStart.y}, {x:tile.x, y:tile.y});
-
-			this.move();
+			this.player.move( pf.find({x: playerStart.x, y: playerStart.y}, {x:tile.x, y:tile.y}));
 		}
 
 };
-
-BasicGame.Game.prototype.move = function() {
-	if( this.remainingPaths.length > 0 ) {
-		var position = this.remainingPaths.shift();
-
-		var playerMovement = this.game.add.tween(this.player);
-
-		playerMovement.to({x: position.x * 32 * this.scale, y: position.y * 32 * this.scale}, 100);
-
-		playerMovement.onComplete.add(function(){
-			this.move();
-		}, this);
-
-		playerMovement.start();
-	} else {
-		this.game.input.enabled = true;
-	}
-}

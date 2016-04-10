@@ -20,7 +20,6 @@ BasicGame.Game.prototype = {
 		},
 
 		preload: function () {
-				this.load.image('logo', 'asset/phaser.png');
 				this.load.spritesheet('floor', 'assets/floors.png', 16, 16, 10);
 				this.load.spritesheet('player', 'assets/player.png', 32, 32, 2);
 				this.load.image('tiles', 'assets/floors.png');
@@ -29,8 +28,13 @@ BasicGame.Game.prototype = {
 		create: function () {
 			var data = '';
 
-			for (var y = 0; y < 128; y++) {
-				for (var x = 0; x < 128; x++) {
+			this.mapGrid = [];
+			this.mapWidth = 128;
+			this.mapHeight = 128;
+
+			for (var y = 0; y < this.mapHeight; y++) {
+				for (var x = 0; x < this.mapWidth; x++) {
+					this.mapGrid.push( 0 );
 					// data += this.rnd.between(0, 10).toString();
 					data += 9;
 
@@ -85,24 +89,16 @@ BasicGame.Game.prototype = {
 			var y = event.y / this.scale;
 
 			var tile = this.map.getTileWorldXY(x, y);
-			console.log(tile);
 
-			console.log("Clicked on " + x + "x" + y);
+		 	var playerStart = this.map.getTileWorldXY(this.player.x / this.scale, this.player.y / this.scale);
+			console.log( playerStart);
 
-			var playerMovement = this.game.add.tween(this.player);
+			var pf = new PathFinding(this.mapGrid, this.mapWidth, this.mapHeight);
+			this.remainingPaths = pf.find({x: playerStart.x, y: playerStart.y}, {x:tile.x, y:tile.y});
 
-			playerMovement.to({x: tile.x * tile.width * this.scale, y: tile.y * tile.height * this.scale}, 700);
+			console.log(this.remainingPaths);
 
-			playerMovement.onComplete.add(function(){
-				//this.uiBlocked = false;
-			}, this);
-
-			playerMovement.start();
-
-			var map = [0, 1,
-				          1, 0,];
-			var pf = new PathFinding(map, 2, 2);
-			console.log( pf.find({x: 0, y: 0}, {x:1, y:1}) );
+			this.move();
 			// var map = [0, 0, 0, 0, 0,
 			//           0, 0, 0, 0, 0,
 			//           0, 0, 0, 0, 0,
@@ -113,3 +109,19 @@ BasicGame.Game.prototype = {
 		}
 
 };
+
+BasicGame.Game.prototype.move = function() {
+	if( this.remainingPaths.length > 0 ) {
+		var position = this.remainingPaths.shift();
+
+		var playerMovement = this.game.add.tween(this.player);
+
+		playerMovement.to({x: position.x * 32 * this.scale, y: position.y * 32 * this.scale}, 100);
+
+		playerMovement.onComplete.add(function(){
+			this.move();
+		}, this);
+
+		playerMovement.start();
+	}
+}

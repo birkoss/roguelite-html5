@@ -8,7 +8,6 @@ function PathFinding(map, width, height) {
 }
 
 PathFinding.prototype.find = function(start, end) {
-	console.log("Find from : " + start.x + "x" + start.y + " to " + end.x +"x" + end.y);
 	return this.findPath(this.map, this.width, this.height, start, end);
 };
 

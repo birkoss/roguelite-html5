@@ -79,33 +79,24 @@ BasicGame.Game.prototype = {
 			this.player.animations.add('idle', [0, 1], 2, true);
 			this.player.animations.play('idle');
 
-			this.player2 = this.add.sprite(0, 32 * this.scale, 'player', 0);
-			//this.player2.scale = {x: scale, y: scale};
+			this.game.camera.follow(this.player);
 		},
 		mouseClicked: function(aa, event) {
-			console.log("Original: " + event.x + "x" + event.y);
-			console.log("Scale: " + this.scale);
-			var x = event.x / this.scale;
-			var y = event.y / this.scale;
+			console.log(this.game.inputEnable);
+			this.game.inputEnable = false;
+			var x = (event.x + this.game.camera.x) / this.scale;
+			var y = (event.y + this.game.camera.y) / this.scale;
+
+			console.log(this.game.camera);
 
 			var tile = this.map.getTileWorldXY(x, y);
 
 		 	var playerStart = this.map.getTileWorldXY(this.player.x / this.scale, this.player.y / this.scale);
-			console.log( playerStart);
 
 			var pf = new PathFinding(this.mapGrid, this.mapWidth, this.mapHeight);
 			this.remainingPaths = pf.find({x: playerStart.x, y: playerStart.y}, {x:tile.x, y:tile.y});
 
-			console.log(this.remainingPaths);
-
 			this.move();
-			// var map = [0, 0, 0, 0, 0,
-			//           0, 0, 0, 0, 0,
-			//           0, 0, 0, 0, 0,
-			//           0, 0, 0, 0, 0,
-			//           0, 0, 0, 0, 0	];
-			// var pf = new PathFinding(map, 5, 5);
-			// console.log( pf.find({x: 0, y: 0}, {x:4, y:4}) );
 		}
 
 };
@@ -123,5 +114,7 @@ BasicGame.Game.prototype.move = function() {
 		}, this);
 
 		playerMovement.start();
+	} else {
+		this.game.inputEnable = true;
 	}
 }

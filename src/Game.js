@@ -74,7 +74,7 @@ BasicGame.Game.prototype = {
 
 			this.add.text(10, 20, "Health:" + this.scale, style);
 
-			this.player = new Character(this.game, 64, 64, 'player');
+			this.player = new Character(this.game, 128, 128, 'player');
 			this.add.existing( this.player );
 
 			this.player.animations.add('idle', [0, 1], 2, true);
@@ -84,15 +84,22 @@ BasicGame.Game.prototype = {
 		},
 		mouseClicked: function(aa, event) {
 			this.game.input.enabled = false;
-			var x = (event.x + this.game.camera.x) / this.scale;
-			var y = (event.y + this.game.camera.y) / this.scale;
+
+			var x = (event.x + this.game.camera.x ) / this.scale;
+			var y = (event.y + this.game.camera.y ) / this.scale;
 
 			var tile = this.map.getTileWorldXY(x, y);
 
-		 	var playerStart = this.map.getTileWorldXY(this.player.x / this.scale, this.player.y / this.scale);
+			var playerPosition = this.player.getPosition();
+		 	var playerStart = this.map.getTileWorldXY(playerPosition.x, playerPosition.y);
+
+			console.log( playerStart );
+			console.log( tile );
+			console.log("-----------------");
 
 			var pf = new PathFinding(this.mapGrid, this.mapWidth, this.mapHeight);
-			this.player.move( pf.find({x: playerStart.x, y: playerStart.y}, {x:tile.x, y:tile.y}));
+			paths = pf.find({x: playerStart.x, y: playerStart.y}, {x:tile.x, y:tile.y});
+			this.player.move( paths );
 		}
 
 };

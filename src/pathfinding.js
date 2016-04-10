@@ -4,7 +4,7 @@ function PathFinding(map, width, height) {
 	this.height = height;
 	this.emptyValue = 0;
 
-	this.includeStartPosition = true;
+	this.includeStartPosition = false;
 }
 
 PathFinding.prototype.find = function(start, end) {

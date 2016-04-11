@@ -20,7 +20,7 @@ this.scale = {x: game.scaleFactor, y: game.scaleFactor};
 	var idlePeriod = 4000;
 	var nextIdle = 0;  // AND THE REST
 
-	var direction = 'left';
+	this.direction = 'left';
 
 }
 
@@ -36,8 +36,8 @@ Character.prototype.getPosition = function() {
 }
 
 Character.prototype.face = function(direction) {
-	console.log("Facing: " + direction);
 	if( this.direction != direction ) {
+		console.log("Facing: " + direction + " from " + this.direction);
 		this.direction = direction;
 		this.scale.x *= -1;
 	}
@@ -49,8 +49,12 @@ Character.prototype.move = function(paths) {
 		var origin = {x: (this.x - (Math.abs(this.width)/2)) / (32 * this.game.scaleFactor), y: (this.y - (Math.abs(this.height)/2))  / (32 * this.game.scaleFactor) };
 
 		var destination = {x: this.x, y: this.y};
+
+		console.log(origin);
+		console.log(position);
+		console.log("-----------------");
 		if( origin.x != position.x ) {
-			this.face( origin.x < position.x ? 'left' : 'right' );
+			this.face( origin.x > position.x ? 'left' : 'right' );
 			destination.x -= this.width;
 		}
 		if( origin.y != position.y ) {
